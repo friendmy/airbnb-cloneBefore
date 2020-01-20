@@ -1,6 +1,4 @@
-from django.utils import timezone
-from django.http import Http404
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.shortcuts import render
 from . import models
 
@@ -15,15 +13,15 @@ class HomeView(ListView):
     ordering = "created"
     context_object_name = "rooms"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["now"] = timezone.now
-        return context
+
+class RoomDetail(DetailView):
+
+    """ RoomDetail """
+
+    model = models.Room
 
 
-def room_detail(request, pk):
-    try:
-        room = models.Room.objects.get(pk=pk)
-        return render(request, "rooms/detail.html", {"room": room})
-    except models.Room.DoesNotExist:
-        raise Http404()
+def search(request):
+    city = request.GET.get("city")
+    city = str.capitalize(city)
+    return render(request, "rooms/search.html", {"city": city})
